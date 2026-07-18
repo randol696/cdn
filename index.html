@@ -1,1 +1,129 @@
-<h1>CDN for use</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG CDN — personal library of UI &amp; utility snippets</title>
+<link rel="stylesheet" href="css/rg.css">
+<link rel="stylesheet" href="css/docs.css">
+</head>
+<body>
+
+<header>
+  <h1>RG CDN</h1>
+  <p>A personal library of UI elements, styles, and utility functions — served straight from GitHub Pages.</p>
+</header>
+
+<main>
+
+  <section id="quick-start">
+    <h2>Quick start</h2>
+    <p class="lead">Drop these two tags into any page. No build step, no dependencies.</p>
+    <pre><code>&lt;link rel="stylesheet" href="https://randol696.github.io/cdn/css/rg.css"&gt;
+&lt;script src="https://randol696.github.io/cdn/js/rg-lib.js"&gt;&lt;/script&gt;</code></pre>
+    <p class="lead">
+      Prefer a versioned, edge-cached copy? Point at
+      <a href="https://www.jsdelivr.com/?docs=gh" target="_blank" rel="noopener">jsDelivr's GitHub mirror</a>
+      instead — swap <code>@main</code> for a tag once you start cutting releases:
+    </p>
+    <pre><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/randol696/cdn@main/css/rg.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/randol696/cdn@main/js/rg-lib.js"&gt;&lt;/script&gt;</code></pre>
+    <p class="lead">Everything hangs off one global, <code>RG</code>: <code>RG.ui.*</code> for elements, <code>RG.utils.*</code> for helpers.</p>
+  </section>
+
+  <section id="buttons">
+    <h2>Buttons</h2>
+    <div class="demo-row" id="button-demo"></div>
+    <pre><code>RG.ui.button({ text: 'Primary', variant: 'primary' });
+RG.ui.button({ text: 'Secondary', variant: 'secondary' });
+RG.ui.button({ text: 'Danger', variant: 'danger' });
+RG.ui.button({ text: 'Outline', variant: 'outline' });</code></pre>
+  </section>
+
+  <section id="card-badge">
+    <h2>Card &amp; badge</h2>
+    <div class="grid" id="card-demo"></div>
+    <pre><code>RG.ui.card({
+  title: 'Deploy status',
+  body: 'Last build finished without errors.',
+  footer: 'Updated just now'
+});
+
+RG.ui.badge('online', 'success');</code></pre>
+  </section>
+
+  <section id="toast">
+    <h2>Toast</h2>
+    <div class="demo-row" id="toast-demo"></div>
+    <pre><code>RG.ui.toast('Saved!', { variant: 'success', duration: 2500 });</code></pre>
+  </section>
+
+  <section id="modal">
+    <h2>Modal</h2>
+    <div class="demo-row" id="modal-demo"></div>
+    <pre><code>RG.ui.modal({
+  title: 'Confirm',
+  body: 'Are you sure you want to continue?'
+});</code></pre>
+  </section>
+
+  <section id="spinner">
+    <h2>Spinner</h2>
+    <div class="demo-row" id="spinner-demo"></div>
+    <pre><code>RG.ui.spinner(32);</code></pre>
+  </section>
+
+  <section id="utils">
+    <h2>Utilities</h2>
+
+    <h3>Debounced search</h3>
+    <div class="demo-row">
+      <input id="search-input" class="search-input" type="text" placeholder="Type to see debounce in action…">
+    </div>
+    <p class="lead" id="search-output">Waiting for input…</p>
+    <pre><code>const search = RG.utils.debounce((value) => {
+  console.log('Searching for:', value);
+}, 400);
+
+input.addEventListener('input', (e) => search(e.target.value));</code></pre>
+
+    <h3>Copy this page's URL to clipboard</h3>
+    <div class="demo-row" id="copy-demo"></div>
+    <pre><code>RG.utils.copyToClipboard(window.location.href);</code></pre>
+
+    <h3>Reference</h3>
+    <table>
+      <thead><tr><th>Function</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>RG.utils.qs / qsa</code></td><td>Shorthand for <code>querySelector</code> / <code>querySelectorAll</code>, returns a real array</td></tr>
+        <tr><td><code>RG.utils.onReady(fn)</code></td><td>Runs <code>fn</code> once the DOM is ready</td></tr>
+        <tr><td><code>RG.utils.debounce(fn, wait)</code></td><td>Delays calls until input goes quiet</td></tr>
+        <tr><td><code>RG.utils.throttle(fn, limit)</code></td><td>Caps how often <code>fn</code> can run</td></tr>
+        <tr><td><code>RG.utils.clamp(n, min, max)</code></td><td>Restricts a number to a range</td></tr>
+        <tr><td><code>RG.utils.randomId(prefix)</code></td><td>Short random DOM-safe id</td></tr>
+        <tr><td><code>RG.utils.escapeHtml(str)</code></td><td>Escapes user text before injecting as HTML</td></tr>
+        <tr><td><code>RG.utils.formatDate(date, locale, opts)</code></td><td>Locale-aware date formatting</td></tr>
+        <tr><td><code>RG.utils.formatCurrency(amount, currency, locale)</code></td><td>Locale-aware currency formatting</td></tr>
+        <tr><td><code>RG.utils.copyToClipboard(text)</code></td><td>Copies text, with a fallback for insecure contexts</td></tr>
+        <tr><td><code>RG.utils.storage.get/set/remove</code></td><td>JSON-safe <code>localStorage</code> wrapper</td></tr>
+        <tr><td><code>RG.utils.deepClone(obj)</code></td><td>Quick structural clone for plain JSON data</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="legacy">
+    <h2>Legacy snippet</h2>
+    <p class="lead"><a href="button.js">button.js</a> is the original standalone snippet from this repo — kept as-is for anything already linking to it directly. New pages should prefer <code>RG.ui.button()</code> above.</p>
+  </section>
+
+</main>
+
+<footer>
+  Source on <a href="https://github.com/randol696/cdn" target="_blank" rel="noopener">GitHub</a> — see the <a href="README.md">README</a> for full docs.
+</footer>
+
+<script src="js/rg-lib.js"></script>
+<script src="js/docs.js"></script>
+
+</body>
+</html>

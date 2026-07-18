@@ -1,0 +1,183 @@
+/*!
+ * RG Style v1.0.0
+ * Shared design tokens + component styles for RG Lib.
+ * https://randol696.github.io/cdn/
+ */
+
+:root {
+  --rg-primary: #4f46e5;
+  --rg-primary-dark: #4338ca;
+  --rg-secondary: #6b7280;
+  --rg-secondary-dark: #4b5563;
+  --rg-danger: #dc2626;
+  --rg-danger-dark: #b91c1c;
+  --rg-success: #16a34a;
+  --rg-bg: #ffffff;
+  --rg-surface: #f9fafb;
+  --rg-border: #e5e7eb;
+  --rg-text: #111827;
+  --rg-text-muted: #6b7280;
+  --rg-radius: 8px;
+  --rg-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --rg-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rg-bg: #111827;
+    --rg-surface: #1f2937;
+    --rg-border: #374151;
+    --rg-text: #f9fafb;
+    --rg-text-muted: #9ca3af;
+    --rg-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ---------- Button ---------- */
+.rg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rg-font);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--rg-radius);
+  cursor: pointer;
+  color: #fff;
+  background: var(--rg-primary);
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+.rg-btn:hover { background: var(--rg-primary-dark); }
+.rg-btn:active { transform: translateY(1px); }
+.rg-btn:focus-visible { outline: 2px solid var(--rg-primary); outline-offset: 2px; }
+
+.rg-btn--secondary { background: var(--rg-secondary); }
+.rg-btn--secondary:hover { background: var(--rg-secondary-dark); }
+
+.rg-btn--danger { background: var(--rg-danger); }
+.rg-btn--danger:hover { background: var(--rg-danger-dark); }
+
+.rg-btn--outline {
+  background: transparent;
+  color: var(--rg-primary);
+  border: 1px solid var(--rg-primary);
+}
+.rg-btn--outline:hover { background: var(--rg-primary); color: #fff; }
+
+/* Legacy standalone snippet (see button.js) kept working on purpose. */
+.blue-button {
+  background: var(--rg-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--rg-radius);
+  padding: 10px 16px;
+  font-family: var(--rg-font);
+  font-weight: 600;
+  cursor: pointer;
+}
+.blue-button:hover { background: var(--rg-primary-dark); }
+
+/* ---------- Card ---------- */
+.rg-card {
+  background: var(--rg-surface);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius);
+  box-shadow: var(--rg-shadow);
+  padding: 16px;
+  font-family: var(--rg-font);
+  color: var(--rg-text);
+}
+.rg-card__title { font-weight: 700; margin-bottom: 8px; }
+.rg-card__body { color: var(--rg-text-muted); }
+.rg-card__footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rg-border); }
+
+/* ---------- Badge ---------- */
+.rg-badge {
+  display: inline-block;
+  font-family: var(--rg-font);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--rg-border);
+  color: var(--rg-text);
+}
+.rg-badge--primary { background: var(--rg-primary); color: #fff; }
+.rg-badge--success { background: var(--rg-success); color: #fff; }
+.rg-badge--danger { background: var(--rg-danger); color: #fff; }
+
+/* ---------- Spinner ---------- */
+.rg-spinner {
+  border: 3px solid var(--rg-border);
+  border-top-color: var(--rg-primary);
+  border-radius: 50%;
+  animation: rg-spin 0.7s linear infinite;
+}
+@keyframes rg-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Toast ---------- */
+.rg-toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+}
+.rg-toast {
+  font-family: var(--rg-font);
+  font-size: 14px;
+  color: #fff;
+  background: var(--rg-text);
+  border-radius: var(--rg-radius);
+  padding: 10px 16px;
+  box-shadow: var(--rg-shadow);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.rg-toast--visible { opacity: 1; transform: translateY(0); }
+.rg-toast--primary { background: var(--rg-primary); }
+.rg-toast--success { background: var(--rg-success); }
+.rg-toast--danger { background: var(--rg-danger); }
+
+/* ---------- Modal ---------- */
+.rg-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.rg-modal {
+  background: var(--rg-bg);
+  color: var(--rg-text);
+  border-radius: var(--rg-radius);
+  box-shadow: var(--rg-shadow);
+  width: min(420px, 90vw);
+  font-family: var(--rg-font);
+}
+.rg-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  padding: 16px;
+  border-bottom: 1px solid var(--rg-border);
+}
+.rg-modal__close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--rg-text-muted);
+}
+.rg-modal__close:hover { color: var(--rg-text); }
+.rg-modal__body { padding: 16px; color: var(--rg-text-muted); }
