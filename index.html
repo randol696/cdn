@@ -10,8 +10,9 @@
 <body>
 
 <header>
+  <span class="hero-pill">v1.1.0 · live from GitHub Pages</span>
   <h1>RG CDN</h1>
-  <p>A personal library of UI elements, styles, and utility functions — served straight from GitHub Pages.</p>
+  <p>A personal library of UI elements, styles, and utility functions — glass-panelled, dark by default, served straight from GitHub Pages.</p>
 </header>
 
 <main>
@@ -52,6 +53,16 @@ RG.ui.button({ text: 'Outline', variant: 'outline' });</code></pre>
 RG.ui.badge('online', 'success');</code></pre>
   </section>
 
+  <section id="alerts">
+    <h2>Alerts</h2>
+    <div class="demo-stack" id="alert-demo"></div>
+    <pre><code>RG.ui.alert({
+  title: 'Heads up',
+  body: 'This banner stays until dismissed.',
+  variant: 'warning'   // default | success | warning | danger
+});</code></pre>
+  </section>
+
   <section id="toast">
     <h2>Toast</h2>
     <div class="demo-row" id="toast-demo"></div>
@@ -65,6 +76,64 @@ RG.ui.badge('online', 'success');</code></pre>
   title: 'Confirm',
   body: 'Are you sure you want to continue?'
 });</code></pre>
+  </section>
+
+  <section id="tabs">
+    <h2>Tabs</h2>
+    <div id="tabs-demo"></div>
+    <pre><code>const tabs = RG.ui.tabs({
+  tabs: [
+    { label: 'Overview', content: '&lt;p&gt;Mission status: nominal.&lt;/p&gt;' },
+    { label: 'Telemetry', content: '&lt;p&gt;Uplink stable at 220 Mbps.&lt;/p&gt;' },
+    { label: 'Logs',      content: '&lt;p&gt;No anomalies in the last 24h.&lt;/p&gt;' }
+  ]
+});
+document.body.appendChild(tabs.element);</code></pre>
+  </section>
+
+  <section id="accordion">
+    <h2>Accordion</h2>
+    <div id="accordion-demo"></div>
+    <pre><code>const acc = RG.ui.accordion({
+  items: [
+    { title: 'What is this?', body: 'A dependency-free UI kit served from GitHub Pages.' },
+    { title: 'How do I install it?', body: 'Two tags — see Quick start above.' },
+    { title: 'Can I self-host it?', body: 'Yes, fork the repo and point at your own Pages URL.' }
+  ]
+});</code></pre>
+  </section>
+
+  <section id="table">
+    <h2>Table</h2>
+    <div id="table-demo"></div>
+    <pre><code>const table = RG.ui.table({
+  striped: true,
+  columns: [
+    { key: 'name',   label: 'Satellite' },
+    { key: 'status', label: 'Status' },
+    { key: 'orbit',  label: 'Orbit' }
+  ],
+  rows: [
+    { name: 'RG-1', status: 'Online',  orbit: 'LEO' },
+    { name: 'RG-2', status: 'Online',  orbit: 'LEO' },
+    { name: 'RG-3', status: 'Standby', orbit: 'MEO' }
+  ]
+});</code></pre>
+  </section>
+
+  <section id="progress">
+    <h2>Progress</h2>
+    <div class="demo-stack" id="progress-demo"></div>
+    <div class="demo-row" id="progress-controls"></div>
+    <pre><code>const bar = RG.ui.progress({ label: 'Deploying…', value: 40 });
+bar.setValue(75); // update later</code></pre>
+  </section>
+
+  <section id="tooltip">
+    <h2>Tooltip</h2>
+    <div class="demo-row" id="tooltip-demo"></div>
+    <pre><code>const btn = RG.ui.button({ text: 'Hover me' });
+RG.ui.tooltip(btn, 'This is a tooltip');</code></pre>
   </section>
 
   <section id="spinner">
@@ -92,23 +161,12 @@ input.addEventListener('input', (e) => search(e.target.value));</code></pre>
     <pre><code>RG.utils.copyToClipboard(window.location.href);</code></pre>
 
     <h3>Reference</h3>
-    <table>
-      <thead><tr><th>Function</th><th>What it does</th></tr></thead>
-      <tbody>
-        <tr><td><code>RG.utils.qs / qsa</code></td><td>Shorthand for <code>querySelector</code> / <code>querySelectorAll</code>, returns a real array</td></tr>
-        <tr><td><code>RG.utils.onReady(fn)</code></td><td>Runs <code>fn</code> once the DOM is ready</td></tr>
-        <tr><td><code>RG.utils.debounce(fn, wait)</code></td><td>Delays calls until input goes quiet</td></tr>
-        <tr><td><code>RG.utils.throttle(fn, limit)</code></td><td>Caps how often <code>fn</code> can run</td></tr>
-        <tr><td><code>RG.utils.clamp(n, min, max)</code></td><td>Restricts a number to a range</td></tr>
-        <tr><td><code>RG.utils.randomId(prefix)</code></td><td>Short random DOM-safe id</td></tr>
-        <tr><td><code>RG.utils.escapeHtml(str)</code></td><td>Escapes user text before injecting as HTML</td></tr>
-        <tr><td><code>RG.utils.formatDate(date, locale, opts)</code></td><td>Locale-aware date formatting</td></tr>
-        <tr><td><code>RG.utils.formatCurrency(amount, currency, locale)</code></td><td>Locale-aware currency formatting</td></tr>
-        <tr><td><code>RG.utils.copyToClipboard(text)</code></td><td>Copies text, with a fallback for insecure contexts</td></tr>
-        <tr><td><code>RG.utils.storage.get/set/remove</code></td><td>JSON-safe <code>localStorage</code> wrapper</td></tr>
-        <tr><td><code>RG.utils.deepClone(obj)</code></td><td>Quick structural clone for plain JSON data</td></tr>
-      </tbody>
-    </table>
+    <div id="utils-reference"></div>
+  </section>
+
+  <section id="components">
+    <h2>Component reference</h2>
+    <div id="components-reference"></div>
   </section>
 
   <section id="legacy">

@@ -2,6 +2,7 @@
 
 A personal CDN and library of UI elements, styles, and utility functions, served
 straight from GitHub Pages so any project can pull them in with a couple of tags.
+Dark, glassmorphic theme by default — frosted panels, glowing cyan/violet accents.
 
 Live docs + interactive demo: **[randol696.github.io/cdn](https://randol696.github.io/cdn/)**
 
@@ -66,12 +67,18 @@ break when this repo changes.
 
 | Function | Description |
 | --- | --- |
-| `button({ text, variant, onClick, className })` | Returns a `<button>` |
-| `card({ title, body, footer })` | Returns a card `<div>` |
-| `badge(text, variant)` | Returns an inline pill (`default`, `primary`, `success`, `danger`) |
-| `spinner(size)` | Returns a spinning loader `<div>` |
+| `button({ text, variant, onClick, className })` | Returns a `<button>` (`primary`, `secondary`, `danger`, `outline`) |
+| `card({ title, body, footer })` | Returns a glass card `<div>` |
+| `badge(text, variant)` | Returns an inline pill with a glow dot (`default`, `primary`, `success`, `danger`) |
+| `alert({ title, body, variant, dismissible })` | Returns a dismissible banner (`default`, `success`, `warning`, `danger`) |
 | `toast(message, { duration, variant })` | Appends a self-dismissing toast to the page |
 | `modal({ title, body, onClose })` | Appends an overlay modal; returns `{ element, close }` |
+| `tabs({ tabs, active })` | Returns `{ element, setActive }` — `tabs` is `[{ label, content }]` |
+| `accordion({ items, multiple })` | Returns a collapsible list `<div>` — `items` is `[{ title, body }]` |
+| `table({ columns, rows, striped })` | Returns a wrapped, styled `<table>` |
+| `progress({ value, max, label })` | Returns `{ element, setValue(v) }` |
+| `tooltip(target, text)` | Attaches a hover tooltip to an existing element |
+| `spinner(size)` | Returns a spinning loader `<div>` |
 
 ### Utilities (`RG.utils`)
 
