@@ -1,0 +1,67 @@
+/*!
+ * Docs page styles for index.html — layout only, not part of RG Lib.
+ */
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--rg-font);
+  color: var(--rg-text);
+  background: var(--rg-bg);
+  line-height: 1.55;
+}
+header {
+  padding: 64px 24px 40px;
+  text-align: center;
+  background: var(--rg-surface);
+  border-bottom: 1px solid var(--rg-border);
+}
+header h1 { margin: 0 0 8px; font-size: 2rem; }
+header p { margin: 0; color: var(--rg-text-muted); }
+main { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+section { margin-bottom: 56px; }
+section h2 {
+  font-size: 1.3rem;
+  border-bottom: 1px solid var(--rg-border);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+section h3 { font-size: 1.05rem; margin: 24px 0 8px; }
+p.lead { color: var(--rg-text-muted); }
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius);
+  flex: 1;
+  min-width: 220px;
+}
+pre {
+  background: var(--rg-surface);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius);
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  position: relative;
+}
+code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  padding: 4px 8px;
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rg-border); vertical-align: top; }
+th { color: var(--rg-text-muted); font-weight: 600; }
+footer { text-align: center; padding: 32px 24px; color: var(--rg-text-muted); font-size: 13px; }
+a { color: var(--rg-primary); }
