@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forms — rg cdn</title>
+<link rel="stylesheet" href="css/rg.css">
+<link rel="stylesheet" href="css/docs.css">
+<script src="js/rg-lib.js"></script>
+<script>rg.utils.theme.init(); rg.utils.skin.init();</script>
+</head>
+<body data-page="forms">
+
+<div class="rg-shell__content">
+<header>
+  <span class="hero-pill">Form elements</span>
+  <h1>Forms</h1>
+  <p>Text, phone, select, checkbox, and switch — glass-styled inputs that pick up whatever theme is active.</p>
+</header>
+
+<main>
+
+  <section id="text-input">
+    <h2>Text input</h2>
+    <div class="demo-stack" id="text-input-demo"></div>
+    <pre><code>const field = rg.ui.input({
+  label: 'Name',
+  placeholder: 'Ada Lovelace',
+  onInput: (value) => console.log(value)
+});
+document.body.appendChild(field.element);</code></pre>
+  </section>
+
+  <section id="phone-input">
+    <h2>Phone input</h2>
+    <p class="lead">Formats digits as you type — <code>(555) 123-4567</code> — and hands back both the formatted string and the raw digits.</p>
+    <div class="demo-stack" id="phone-input-demo"></div>
+    <pre><code>const phone = rg.ui.phoneInput({
+  label: 'Phone number',
+  onChange: (formatted, digits) => console.log(formatted, digits)
+});
+document.body.appendChild(phone.element);</code></pre>
+  </section>
+
+  <section id="select">
+    <h2>Select</h2>
+    <div class="demo-stack" id="select-demo"></div>
+    <pre><code>const field = rg.ui.select({
+  label: 'Orbit',
+  options: [
+    { value: 'leo', label: 'Low Earth Orbit' },
+    { value: 'meo', label: 'Medium Earth Orbit' },
+    { value: 'geo', label: 'Geostationary' }
+  ],
+  value: 'leo',
+  onChange: (value) => console.log(value)
+});</code></pre>
+  </section>
+
+  <section id="checkbox">
+    <h2>Checkbox</h2>
+    <div class="demo-row" id="checkbox-demo"></div>
+    <pre><code>rg.ui.checkbox({
+  label: 'Notify me on deploy',
+  checked: true,
+  onChange: (checked) => console.log(checked)
+});</code></pre>
+  </section>
+
+  <section id="switch">
+    <h2>Switch</h2>
+    <div class="demo-row" id="switch-demo"></div>
+    <pre><code>const toggle = rg.ui.switchToggle({
+  label: 'Auto-refresh',
+  onChange: (checked) => console.log(checked)
+});
+document.body.appendChild(toggle.element);</code></pre>
+  </section>
+
+  <section id="debounced-search">
+    <h2>Debounced search</h2>
+    <div class="demo-stack" id="search-demo"></div>
+    <p class="lead" id="search-output">Waiting for input…</p>
+    <pre><code>const search = rg.utils.debounce((value) => {
+  console.log('Searching for:', value);
+}, 400);
+
+field.input.addEventListener('input', (e) => search(e.target.value));</code></pre>
+  </section>
+
+  <section id="copy-clipboard">
+    <h2>Copy to clipboard</h2>
+    <div class="demo-row" id="copy-demo"></div>
+    <pre><code>rg.utils.copyToClipboard(window.location.href);</code></pre>
+  </section>
+
+</main>
+
+<footer>
+  Source on <a href="https://github.com/randol696/cdn" target="_blank" rel="noopener">GitHub</a> — see the <a href="README.md">README</a> for full docs.
+</footer>
+</div>
+
+<script src="js/docs.js"></script>
+
+</body>
+</html>
