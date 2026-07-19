@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RG CDN — personal library of UI &amp; utility snippets</title>
+<title>rg cdn — personal library of UI &amp; utility snippets</title>
 <link rel="stylesheet" href="css/rg.css">
 <link rel="stylesheet" href="css/docs.css">
+<script src="js/rg-lib.js"></script>
+<script>rg.utils.theme.init(); rg.utils.skin.init();</script>
 </head>
-<body>
+<body data-page="index">
 
+<div class="rg-shell__content">
 <header>
-  <span class="hero-pill">v1.1.0 · live from GitHub Pages</span>
-  <h1>RG CDN</h1>
-  <p>A personal library of UI elements, styles, and utility functions — glass-panelled, dark by default, served straight from GitHub Pages.</p>
+  <span class="hero-pill">v1.4.0 · live from GitHub Pages</span>
+  <h1>rg cdn</h1>
+  <p>A personal library of UI elements, styles, and utility functions — glass-panelled, dark or light, served straight from GitHub Pages.</p>
 </header>
 
 <main>
@@ -29,149 +32,70 @@
     </p>
     <pre><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/randol696/cdn@main/css/rg.css"&gt;
 &lt;script src="https://cdn.jsdelivr.net/gh/randol696/cdn@main/js/rg-lib.js"&gt;&lt;/script&gt;</code></pre>
-    <p class="lead">Everything hangs off one global, <code>RG</code>: <code>RG.ui.*</code> for elements, <code>RG.utils.*</code> for helpers.</p>
+    <p class="lead">Everything hangs off one global, <code>rg</code>: <code>rg.ui.*</code> for elements, <code>rg.utils.*</code> for helpers. Explore <a href="components.html">Components</a>, <a href="forms.html">Forms</a>, and the full <a href="reference.html">Reference</a> in the nav above.</p>
+  </section>
+
+  <section id="theming">
+    <h2>Theming</h2>
+    <p class="lead">Every color is a CSS variable, so the whole kit — including this site — flips between dark and light with one call. Try the toggle in the top-right corner.</p>
+    <div class="demo-row" id="theme-demo"></div>
+    <pre><code>rg.utils.theme.init();      // apply saved preference on page load — call once, early
+rg.utils.theme.toggle();    // dark &lt;-&gt; light
+rg.utils.theme.set('light');
+rg.utils.theme.get();       // 'dark' | 'light'</code></pre>
+
+    <h3>Skins</h3>
+    <p class="lead">Dark/light controls light vs. dark; skins control the accent color pair on top of that — five built in, and independent of theme. Try the swatches next to the theme toggle.</p>
+    <div class="demo-row" id="skin-demo"></div>
+    <pre><code>rg.utils.skin.init();          // apply saved preference on page load — call once, early
+rg.utils.skin.set('violet');   // 'cyan' | 'violet' | 'emerald' | 'amber' | 'rose'
+rg.utils.skin.get();
+
+document.body.appendChild(rg.ui.skinPicker()); // ready-made swatch row</code></pre>
   </section>
 
   <section id="buttons">
     <h2>Buttons</h2>
+    <p class="lead">Eight color variants, and shape is opt-in — pill by default, or <code>rounded</code> / <code>square</code>.</p>
     <div class="demo-row" id="button-demo"></div>
-    <pre><code>RG.ui.button({ text: 'Primary', variant: 'primary' });
-RG.ui.button({ text: 'Secondary', variant: 'secondary' });
-RG.ui.button({ text: 'Danger', variant: 'danger' });
-RG.ui.button({ text: 'Outline', variant: 'outline' });</code></pre>
+    <div class="demo-row" id="button-shape-demo"></div>
+    <pre><code>rg.ui.button({ text: 'Primary', variant: 'primary' });
+rg.ui.button({ text: 'Success', variant: 'success' });
+rg.ui.button({ text: 'Warning', variant: 'warning' });
+rg.ui.button({ text: 'Info',    variant: 'info' });
+rg.ui.button({ text: 'Danger',  variant: 'danger' });
+rg.ui.button({ text: 'Outline', variant: 'outline' });
+rg.ui.button({ text: 'Ghost',   variant: 'ghost' });
+
+// shape: 'pill' (default) | 'rounded' | 'square'
+rg.ui.button({ text: 'Square', shape: 'square' });</code></pre>
   </section>
 
   <section id="card-badge">
     <h2>Card &amp; badge</h2>
     <div class="grid" id="card-demo"></div>
-    <pre><code>RG.ui.card({
+    <pre><code>rg.ui.card({
   title: 'Deploy status',
   body: 'Last build finished without errors.',
   footer: 'Updated just now'
 });
 
-RG.ui.badge('online', 'success');</code></pre>
+rg.ui.badge('online', 'success');</code></pre>
   </section>
 
   <section id="alerts">
     <h2>Alerts</h2>
     <div class="demo-stack" id="alert-demo"></div>
-    <pre><code>RG.ui.alert({
+    <pre><code>rg.ui.alert({
   title: 'Heads up',
   body: 'This banner stays until dismissed.',
   variant: 'warning'   // default | success | warning | danger
 });</code></pre>
   </section>
 
-  <section id="toast">
-    <h2>Toast</h2>
-    <div class="demo-row" id="toast-demo"></div>
-    <pre><code>RG.ui.toast('Saved!', { variant: 'success', duration: 2500 });</code></pre>
-  </section>
-
-  <section id="modal">
-    <h2>Modal</h2>
-    <div class="demo-row" id="modal-demo"></div>
-    <pre><code>RG.ui.modal({
-  title: 'Confirm',
-  body: 'Are you sure you want to continue?'
-});</code></pre>
-  </section>
-
-  <section id="tabs">
-    <h2>Tabs</h2>
-    <div id="tabs-demo"></div>
-    <pre><code>const tabs = RG.ui.tabs({
-  tabs: [
-    { label: 'Overview', content: '&lt;p&gt;Mission status: nominal.&lt;/p&gt;' },
-    { label: 'Telemetry', content: '&lt;p&gt;Uplink stable at 220 Mbps.&lt;/p&gt;' },
-    { label: 'Logs',      content: '&lt;p&gt;No anomalies in the last 24h.&lt;/p&gt;' }
-  ]
-});
-document.body.appendChild(tabs.element);</code></pre>
-  </section>
-
-  <section id="accordion">
-    <h2>Accordion</h2>
-    <div id="accordion-demo"></div>
-    <pre><code>const acc = RG.ui.accordion({
-  items: [
-    { title: 'What is this?', body: 'A dependency-free UI kit served from GitHub Pages.' },
-    { title: 'How do I install it?', body: 'Two tags — see Quick start above.' },
-    { title: 'Can I self-host it?', body: 'Yes, fork the repo and point at your own Pages URL.' }
-  ]
-});</code></pre>
-  </section>
-
-  <section id="table">
-    <h2>Table</h2>
-    <div id="table-demo"></div>
-    <pre><code>const table = RG.ui.table({
-  striped: true,
-  columns: [
-    { key: 'name',   label: 'Satellite' },
-    { key: 'status', label: 'Status' },
-    { key: 'orbit',  label: 'Orbit' }
-  ],
-  rows: [
-    { name: 'RG-1', status: 'Online',  orbit: 'LEO' },
-    { name: 'RG-2', status: 'Online',  orbit: 'LEO' },
-    { name: 'RG-3', status: 'Standby', orbit: 'MEO' }
-  ]
-});</code></pre>
-  </section>
-
-  <section id="progress">
-    <h2>Progress</h2>
-    <div class="demo-stack" id="progress-demo"></div>
-    <div class="demo-row" id="progress-controls"></div>
-    <pre><code>const bar = RG.ui.progress({ label: 'Deploying…', value: 40 });
-bar.setValue(75); // update later</code></pre>
-  </section>
-
-  <section id="tooltip">
-    <h2>Tooltip</h2>
-    <div class="demo-row" id="tooltip-demo"></div>
-    <pre><code>const btn = RG.ui.button({ text: 'Hover me' });
-RG.ui.tooltip(btn, 'This is a tooltip');</code></pre>
-  </section>
-
-  <section id="spinner">
-    <h2>Spinner</h2>
-    <div class="demo-row" id="spinner-demo"></div>
-    <pre><code>RG.ui.spinner(32);</code></pre>
-  </section>
-
-  <section id="utils">
-    <h2>Utilities</h2>
-
-    <h3>Debounced search</h3>
-    <div class="demo-row">
-      <input id="search-input" class="search-input" type="text" placeholder="Type to see debounce in action…">
-    </div>
-    <p class="lead" id="search-output">Waiting for input…</p>
-    <pre><code>const search = RG.utils.debounce((value) => {
-  console.log('Searching for:', value);
-}, 400);
-
-input.addEventListener('input', (e) => search(e.target.value));</code></pre>
-
-    <h3>Copy this page's URL to clipboard</h3>
-    <div class="demo-row" id="copy-demo"></div>
-    <pre><code>RG.utils.copyToClipboard(window.location.href);</code></pre>
-
-    <h3>Reference</h3>
-    <div id="utils-reference"></div>
-  </section>
-
-  <section id="components">
-    <h2>Component reference</h2>
-    <div id="components-reference"></div>
-  </section>
-
   <section id="legacy">
     <h2>Legacy snippet</h2>
-    <p class="lead"><a href="button.js">button.js</a> is the original standalone snippet from this repo — kept as-is for anything already linking to it directly. New pages should prefer <code>RG.ui.button()</code> above.</p>
+    <p class="lead"><a href="button.js">button.js</a> is the original standalone snippet from this repo — kept as-is for anything already linking to it directly. New pages should prefer <code>rg.ui.button()</code> above.</p>
   </section>
 
 </main>
@@ -179,8 +103,8 @@ input.addEventListener('input', (e) => search(e.target.value));</code></pre>
 <footer>
   Source on <a href="https://github.com/randol696/cdn" target="_blank" rel="noopener">GitHub</a> — see the <a href="README.md">README</a> for full docs.
 </footer>
+</div>
 
-<script src="js/rg-lib.js"></script>
 <script src="js/docs.js"></script>
 
 </body>

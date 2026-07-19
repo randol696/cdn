@@ -1,12 +1,12 @@
 /*!
- * RG Lib v1.1.0
+ * rg lib v1.4.0
  * A tiny, dependency-free utility & UI kit, served straight from this CDN.
  * https://randol696.github.io/cdn/
  *
  * Usage:
  *   <link rel="stylesheet" href="https://randol696.github.io/cdn/css/rg.css">
  *   <script src="https://randol696.github.io/cdn/js/rg-lib.js"></script>
- *   <script>RG.ui.button({ text: 'Hi' })</script>
+ *   <script>rg.ui.button({ text: 'Hi' })</script>
  */
 (function (global) {
   'use strict';
@@ -100,6 +100,82 @@
     },
     deepClone: function (obj) {
       return JSON.parse(JSON.stringify(obj));
+    },
+    uuid: function () {
+      if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0;
+        var v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    },
+    sleep: function (ms) {
+      return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    },
+    groupBy: function (arr, key) {
+      var getKey = typeof key === 'function' ? key : function (item) { return item[key]; };
+      return arr.reduce(function (acc, item) {
+        var k = getKey(item);
+        (acc[k] = acc[k] || []).push(item);
+        return acc;
+      }, {});
+    },
+    formatNumber: function (n, locale) {
+      return new Intl.NumberFormat(locale || 'en-US').format(n);
+    },
+    truncate: function (str, len, suffix) {
+      str = String(str);
+      suffix = suffix === undefined ? '…' : suffix;
+      return str.length > len ? str.slice(0, len).replace(/\s+$/, '') + suffix : str;
+    },
+    getQueryParam: function (name) {
+      return new URLSearchParams(window.location.search).get(name);
+    },
+    isMobile: function () {
+      return window.matchMedia('(max-width: 768px)').matches;
+    },
+    onOutsideClick: function (el, handler) {
+      function listener(e) {
+        if (!el.contains(e.target)) handler(e);
+      }
+      document.addEventListener('click', listener, true);
+      return function () { document.removeEventListener('click', listener, true); };
+    },
+    theme: {
+      STORAGE_KEY: 'rg-theme',
+      get: function () {
+        return document.documentElement.getAttribute('data-theme') || 'dark';
+      },
+      set: function (name) {
+        document.documentElement.setAttribute('data-theme', name);
+        utils.storage.set(utils.theme.STORAGE_KEY, name);
+        document.dispatchEvent(new CustomEvent('rg:themechange', { detail: { theme: name } }));
+      },
+      toggle: function () {
+        var next = utils.theme.get() === 'dark' ? 'light' : 'dark';
+        utils.theme.set(next);
+        return next;
+      },
+      init: function () {
+        var saved = utils.storage.get(utils.theme.STORAGE_KEY, null);
+        document.documentElement.setAttribute('data-theme', saved || 'dark');
+      }
+    },
+    skin: {
+      STORAGE_KEY: 'rg-skin',
+      SKINS: ['cyan', 'violet', 'emerald', 'amber', 'rose'],
+      get: function () {
+        return document.documentElement.getAttribute('data-skin') || 'cyan';
+      },
+      set: function (name) {
+        document.documentElement.setAttribute('data-skin', name);
+        utils.storage.set(utils.skin.STORAGE_KEY, name);
+        document.dispatchEvent(new CustomEvent('rg:skinchange', { detail: { skin: name } }));
+      },
+      init: function () {
+        var saved = utils.storage.get(utils.skin.STORAGE_KEY, null);
+        document.documentElement.setAttribute('data-skin', saved || 'cyan');
+      }
     }
   };
 
@@ -110,8 +186,12 @@
     button: function (opts) {
       opts = opts || {};
       var btn = document.createElement('button');
+      btn.type = opts.type || 'button';
       btn.textContent = opts.text || 'Click me';
-      btn.className = ('rg-btn rg-btn--' + (opts.variant || 'primary') + ' ' + (opts.className || '')).trim();
+      var classes = ['rg-btn', 'rg-btn--' + (opts.variant || 'primary')];
+      if (opts.shape) classes.push('rg-shape-' + opts.shape);
+      if (opts.className) classes.push(opts.className);
+      btn.className = classes.join(' ');
       if (opts.onClick) btn.addEventListener('click', opts.onClick);
       return btn;
     },
@@ -125,9 +205,12 @@
         (opts.footer ? '<div class="rg-card__footer">' + opts.footer + '</div>' : '');
       return card;
     },
-    badge: function (text, variant) {
+    badge: function (text, variant, opts) {
+      opts = opts || {};
       var span = document.createElement('span');
-      span.className = 'rg-badge rg-badge--' + (variant || 'default');
+      var classes = ['rg-badge', 'rg-badge--' + (variant || 'default')];
+      if (opts.shape) classes.push('rg-shape-' + opts.shape);
+      span.className = classes.join(' ');
       span.textContent = text || '';
       return span;
     },
@@ -187,7 +270,10 @@
       var columns = opts.columns || [];
       var rows = opts.rows || [];
       var wrap = document.createElement('div');
-      wrap.className = 'rg-table-wrap';
+      var wrapClasses = ['rg-table-wrap'];
+      if (opts.variant) wrapClasses.push('rg-table-wrap--' + opts.variant);
+      if (opts.shape) wrapClasses.push('rg-shape-' + opts.shape);
+      wrap.className = wrapClasses.join(' ');
       var table = document.createElement('table');
       table.className = 'rg-table' + (opts.striped ? ' rg-table--striped' : '');
 
@@ -373,8 +459,303 @@
       bubble.textContent = text;
       target.appendChild(bubble);
       return bubble;
+    },
+    input: function (opts) {
+      opts = opts || {};
+      var wrap = document.createElement('div');
+      wrap.className = 'rg-field';
+      var id = opts.id || utils.randomId('rg-input');
+      if (opts.label) {
+        var label = document.createElement('label');
+        label.className = 'rg-field__label';
+        label.setAttribute('for', id);
+        label.textContent = opts.label;
+        wrap.appendChild(label);
+      }
+      var input = document.createElement('input');
+      input.className = 'rg-field__control';
+      input.type = opts.type || 'text';
+      input.id = id;
+      if (opts.placeholder) input.placeholder = opts.placeholder;
+      if (opts.value !== undefined) input.value = opts.value;
+      if (opts.onInput) input.addEventListener('input', function (e) { opts.onInput(e.target.value, e); });
+      wrap.appendChild(input);
+      return { element: wrap, input: input };
+    },
+    phoneInput: function (opts) {
+      opts = opts || {};
+      var field = ui.input({
+        label: opts.label || 'Phone',
+        type: 'tel',
+        placeholder: opts.placeholder || '(555) 123-4567',
+        value: opts.value || '',
+        id: opts.id
+      });
+      var input = field.input;
+      input.addEventListener('input', function () {
+        var digits = input.value.replace(/\D/g, '').slice(0, 10);
+        var formatted = digits;
+        if (digits.length > 6) formatted = '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6);
+        else if (digits.length > 3) formatted = '(' + digits.slice(0, 3) + ') ' + digits.slice(3);
+        else if (digits.length > 0) formatted = '(' + digits;
+        input.value = formatted;
+        if (opts.onChange) opts.onChange(formatted, digits);
+      });
+      return field;
+    },
+    select: function (opts) {
+      opts = opts || {};
+      var wrap = document.createElement('div');
+      wrap.className = 'rg-field';
+      var id = opts.id || utils.randomId('rg-select');
+      if (opts.label) {
+        var label = document.createElement('label');
+        label.className = 'rg-field__label';
+        label.setAttribute('for', id);
+        label.textContent = opts.label;
+        wrap.appendChild(label);
+      }
+      var select = document.createElement('select');
+      select.className = 'rg-field__control';
+      select.id = id;
+      (opts.options || []).forEach(function (opt) {
+        var option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        if (opt.value === opts.value) option.selected = true;
+        select.appendChild(option);
+      });
+      if (opts.onChange) select.addEventListener('change', function (e) { opts.onChange(e.target.value, e); });
+      wrap.appendChild(select);
+      return { element: wrap, select: select };
+    },
+    checkbox: function (opts) {
+      opts = opts || {};
+      var label = document.createElement('label');
+      label.className = 'rg-checkbox';
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = !!opts.checked;
+      if (opts.onChange) input.addEventListener('change', function (e) { opts.onChange(e.target.checked, e); });
+      var box = document.createElement('span');
+      box.className = 'rg-checkbox__box';
+      var text = document.createElement('span');
+      text.className = 'rg-checkbox__label';
+      text.textContent = opts.label || '';
+      label.appendChild(input);
+      label.appendChild(box);
+      label.appendChild(text);
+      return label;
+    },
+    switchToggle: function (opts) {
+      opts = opts || {};
+      var label = document.createElement('label');
+      label.className = 'rg-switch';
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = !!opts.checked;
+      if (opts.onChange) input.addEventListener('change', function (e) { opts.onChange(e.target.checked, e); });
+      var track = document.createElement('span');
+      track.className = 'rg-switch__track';
+      label.appendChild(input);
+      label.appendChild(track);
+      if (opts.label) {
+        var text = document.createElement('span');
+        text.className = 'rg-switch__label';
+        text.textContent = opts.label;
+        label.appendChild(text);
+      }
+      return { element: label, input: input };
+    },
+    themeToggle: function () {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'rg-theme-toggle';
+      function render() {
+        var isDark = utils.theme.get() === 'dark';
+        btn.textContent = isDark ? '☀️' : '🌙';
+        btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+      }
+      btn.addEventListener('click', function () {
+        utils.theme.toggle();
+        render();
+      });
+      render();
+      return btn;
+    },
+    skinPicker: function (opts) {
+      opts = opts || {};
+      var skins = opts.skins || utils.skin.SKINS;
+      var wrap = document.createElement('div');
+      wrap.className = 'rg-skin-picker';
+
+      function render() {
+        wrap.innerHTML = '';
+        var current = utils.skin.get();
+        skins.forEach(function (name) {
+          var swatch = document.createElement('button');
+          swatch.type = 'button';
+          swatch.className = 'rg-skin-swatch rg-skin-swatch--' + name + (name === current ? ' rg-skin-swatch--active' : '');
+          swatch.setAttribute('aria-label', 'Switch to the ' + name + ' skin');
+          swatch.addEventListener('click', function () {
+            utils.skin.set(name);
+            render();
+          });
+          wrap.appendChild(swatch);
+        });
+      }
+
+      render();
+      return wrap;
+    },
+    navbar: function (opts) {
+      opts = opts || {};
+      var nav = document.createElement('header');
+      nav.className = 'rg-navbar' + (opts.fixed === false ? '' : ' rg-navbar--fixed');
+
+      var brand = document.createElement('a');
+      brand.className = 'rg-navbar__brand';
+      brand.href = opts.brandHref || '#';
+      brand.textContent = opts.brand || 'rg';
+
+      var links = document.createElement('nav');
+      links.className = 'rg-navbar__links';
+      (opts.links || []).forEach(function (link) {
+        var a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.label;
+        a.className = 'rg-navbar__link' + (link.active ? ' rg-navbar__link--active' : '');
+        links.appendChild(a);
+      });
+
+      var actions = document.createElement('div');
+      actions.className = 'rg-navbar__actions';
+      (opts.actions || []).forEach(function (el) { actions.appendChild(el); });
+
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'rg-navbar__toggle';
+      toggle.setAttribute('aria-label', 'Toggle menu');
+      toggle.innerHTML = '&#9776;';
+      if (opts.onToggle) toggle.addEventListener('click', opts.onToggle);
+
+      nav.appendChild(brand);
+      nav.appendChild(links);
+      nav.appendChild(actions);
+      nav.appendChild(toggle);
+      return nav;
+    },
+    sidebar: function (opts) {
+      opts = opts || {};
+      var aside = document.createElement('aside');
+      aside.className = 'rg-sidebar' + (opts.fixed === false ? '' : ' rg-sidebar--fixed');
+
+      (opts.sections || []).forEach(function (section) {
+        var sec = document.createElement('div');
+        sec.className = 'rg-sidebar__section';
+        if (section.title) {
+          var title = document.createElement('div');
+          title.className = 'rg-sidebar__title';
+          title.textContent = section.title;
+          sec.appendChild(title);
+        }
+        (section.links || []).forEach(function (link) {
+          var a = document.createElement('a');
+          a.href = link.href;
+          a.textContent = link.label;
+          a.className = 'rg-sidebar__link' + (link.active ? ' rg-sidebar__link--active' : '');
+          sec.appendChild(a);
+        });
+        aside.appendChild(sec);
+      });
+
+      return aside;
+    },
+    avatar: function (opts) {
+      opts = opts || {};
+      var size = opts.size || 40;
+      var el = document.createElement('div');
+      el.className = 'rg-avatar';
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.fontSize = Math.round(size * 0.4) + 'px';
+      if (opts.src) {
+        var img = document.createElement('img');
+        img.src = opts.src;
+        img.alt = opts.alt || '';
+        el.appendChild(img);
+      } else {
+        var initials = document.createElement('span');
+        initials.textContent = (opts.initials || '?').slice(0, 2).toUpperCase();
+        el.appendChild(initials);
+      }
+      if (opts.status) {
+        var dot = document.createElement('span');
+        dot.className = 'rg-avatar__status rg-avatar__status--' + opts.status;
+        el.appendChild(dot);
+      }
+      return el;
+    },
+    skeleton: function (opts) {
+      opts = opts || {};
+      var el = document.createElement('div');
+      el.className = 'rg-skeleton rg-skeleton--' + (opts.shape || 'text');
+      if (opts.width) el.style.width = typeof opts.width === 'number' ? opts.width + 'px' : opts.width;
+      if (opts.height) el.style.height = typeof opts.height === 'number' ? opts.height + 'px' : opts.height;
+      return el;
+    },
+    fab: function (opts) {
+      opts = opts || {};
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      var classes = ['rg-fab', 'rg-fab--' + (opts.variant || 'primary')];
+      if (opts.fixed === false) classes.push('rg-fab--static');
+      btn.className = classes.join(' ');
+      btn.textContent = opts.icon || '+';
+      btn.setAttribute('aria-label', opts.label || 'Action');
+      if (opts.onClick) btn.addEventListener('click', opts.onClick);
+      return btn;
+    },
+    bottomNav: function (opts) {
+      opts = opts || {};
+      var nav = document.createElement('nav');
+      nav.className = 'rg-bottom-nav' + (opts.fixed === false ? ' rg-bottom-nav--static' : '');
+      (opts.items || []).forEach(function (item) {
+        var a = document.createElement('a');
+        a.href = item.href || '#';
+        a.className = 'rg-bottom-nav__item' + (item.active ? ' rg-bottom-nav__item--active' : '');
+        a.innerHTML =
+          '<span class="rg-bottom-nav__icon">' + (item.icon || '') + '</span>' +
+          '<span class="rg-bottom-nav__label">' + (item.label || '') + '</span>';
+        nav.appendChild(a);
+      });
+      return nav;
+    },
+    bottomSheet: function (opts) {
+      opts = opts || {};
+      var overlay = document.createElement('div');
+      overlay.className = 'rg-sheet-overlay';
+      overlay.innerHTML =
+        '<div class="rg-sheet" role="dialog" aria-modal="true">' +
+          '<div class="rg-sheet__handle"></div>' +
+          (opts.title ? '<div class="rg-sheet__header">' + opts.title + '</div>' : '') +
+          '<div class="rg-sheet__body">' + (opts.body || '') + '</div>' +
+        '</div>';
+      function close() {
+        overlay.classList.remove('rg-sheet-overlay--visible');
+        setTimeout(function () {
+          overlay.remove();
+          if (opts.onClose) opts.onClose();
+        }, 250);
+      }
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+      });
+      document.body.appendChild(overlay);
+      requestAnimationFrame(function () { overlay.classList.add('rg-sheet-overlay--visible'); });
+      return { element: overlay, close: close };
     }
   };
 
-  global.RG = { utils: utils, ui: ui, version: '1.1.0' };
+  global.rg = { utils: utils, ui: ui, version: '1.4.0' };
 })(window);
